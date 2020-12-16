@@ -1,0 +1,120 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div *ngIf="lancamentos.length > 0" class="col-12 col-lg-4">
+      <div class="row">
+        <div class="col-sm-4 col-lg-6">
+          <div class="card text-white bg-info align-self-center">
+            <div class="card-body">
+              <div class="h3 mb-0">R${{total}}</div>
+              <small class="text-uppercase font-weight-bold">Total transferências do período</small>
+            </div>
+          </div>
+        </div>
+        <!--/.col-->
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+  <!--/.row-->
+  <div class="row">
+    <div class="col-12 col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <strong>{{nomeTela}}</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-2 col-6 mb-3">
+              <select ngModel class="form-control" name="statusTransferencia" #statusTransferencia="ngModel"
+                [(ngModel)]="itensPerSize">
+                <option *ngFor="let opcao of pageSizeOptions" [value]="opcao">{{opcao}}</option>
+              </select>
+            </div>
+
+            <div class="col-sm-4 col-12 mb-3 ">
+              <input type="text" ngxDaterangepickerMd [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]=true
+                [linkedCalendars]="true" class="form-control" name="dataFiltro" [(ngModel)]="dtFiltro" readonly
+                [ngStyle]="{'background-color':'#fff'}" (datesUpdated)="AtualizaItens()">
+            </div>
+
+            <div class="col-sm-4 col-12 mb-3">
+              <input #busca type="text" class="form-control" placeholder="Buscar" (keyup)="filter(busca.value)">
+            </div>
+
+            <div class="col-sm-2 col-12 mb-3">
+              <button type="button" class="pull-right btn btn-success ml-2" [routerLink]="['nova-transferencia']"
+                data-toggle="tooltip" data-placement="top" title="Incluir nova transferencia"><i
+                  class="fa fa-plus "></i></button>
+              <button [disabled]="lancamentos.length == 0" type="button" class="pull-right btn btn-xing"
+                data-toggle="tooltip" data-placement="top" title="Exportar" (click)="exportToExcel()"><i
+                  class="fa fa-download" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <!--/.row-->
+
+          <div *ngIf="isLoading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div class="alert alert-info" role="alert" *ngIf="!isLoading  && lancamentos.length == 0">
+            Não há lançamentos para o período informado!
+          </div>
+
+          <table *ngIf="!isLoading  && lancamentos.length > 0" class="table table-sm table-striped table-borderless"
+            #sheetTable>
+            <thead class="thead-dark">
+              <tr>
+                <th class=""></th>
+                <th *ngFor="let itemHeader of getHeader()" [ngClass]="{'content-desktop': !itemHeader.mobile}">
+                  <a [href]="" (click)="sortTable(itemHeader.value)">
+                    {{itemHeader.nome}}
+                    <span *ngIf="sortType == itemHeader.value && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortType == itemHeader.value && sortReverse" class="fa fa-caret-up"></span>
+                  </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of lancamentosPaginados">
+                <td class="text-left align-middle">
+                  <div class="btn-group" dropdown>
+                    <button dropdownToggle type="button" class="btn">
+                      <i class="fa fa-ellipsis-v"></i>
+                    </button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><button class="dropdown-item" [routerLink]="['editar-transferencia', item._id]"><i
+                            class="fa fa-pencil"></i>Editar</button>
+                      </li>
+                      <li role="menuitem"><button class="dropdown-item" (click)="deleteItem(item)"><i
+                            class="fa fa-trash"></i>Excluir</button></li>
+                    </ul>
+                  </div>
+                </td>
+                <td class="align-middle">{{item.data | date:"dd/MM/yyyy" }}</td>
+                <td class="align-middle content-desktop"><strong>{{item.contaOrigem.descricao}}</strong></td>
+                <td class="align-middle content-desktop"><strong>{{item.contaDestino.descricao}}</strong></td>
+                <td class="align-middle content-desktop">{{item.documento}}</td>
+                <td class="align-middle content-desktop">{{item.descricao}}</td>
+                <td class="align-middle"><strong>R$ {{item.valor}}</strong></td>
+                <td class="align-middle content-desktop"><span *ngFor="let tag of item.tag" class="badge ml-1"
+                    [ngStyle]="{'background-color':'#'+tag.cor , 'color':'#'+tag.corTexto}">{{tag.descricao}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="row">
+            <div class="col-12 col-sm-6 mt-3">
+              <rlar-pagination [serverSide]="false" [items]="lancamentosFiltrados" [pageSize]="itensPerSize"
+                [totalItens]="totalItens" (changePage)="onChangePage($event)"></rlar-pagination>
+            </div>
+          </div>
+        </div>
+        <!--/.col-->
+      </div>
+      <!--/.row-->
+    </div>
+    <!--/.col-->
+  </div>
+  <!--/.row-->
+</div>

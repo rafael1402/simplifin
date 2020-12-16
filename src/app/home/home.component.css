@@ -1,0 +1,11 @@
+@media screen and (max-width: 768px) {
+
+  .content-desktop {
+    display: none;
+  }
+
+  .content-mobile {
+    display: block;
+  }
+
+}

@@ -1,0 +1,90 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          <strong>{{nomeTela}}</strong>
+        </div>
+        <div class="card-body">
+          <div *ngIf="!isLoading" class="row">
+            <div class="col-sm-2 col-6 mb-3">
+              <select ngModel class="form-control" name="statusFormaPagamento" #statusFormaPagamento="ngModel"
+                [(ngModel)]="itensPerSize">
+                <option *ngFor="let opcao of pageSizeOptions" [value]="opcao">{{opcao}}</option>
+              </select>
+            </div>
+            <div class="col-sm-8 col-6">
+              <input #busca type="text" class="form-control" placeholder="Buscar" (keyup)="filter(busca.value)">
+            </div>
+            <div class="col-sm-2 col-12 mb-3">
+
+              <button type="button" class="pull-right btn btn-success ml-2" [routerLink]="['nova-forma-pagamento']"
+                data-toggle="tooltip" data-placement="top" title="Incluir nova forma de pagamento"><i
+                  class="fa fa-plus "></i></button>
+
+              <button [disabled]="formasPagamento.length == 0" type="button" class="pull-right btn btn-xing"
+                data-toggle="tooltip" data-placement="top" title="Exportar" (click)="exportToExcel()"><i
+                  class="fa fa-download" aria-hidden="true"></i></button>
+
+            </div>
+          </div>
+          <div *ngIf="isLoading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div class="alert alert-info" role="alert" *ngIf="!isLoading  && formasPagamento.length == 0">
+            Nao há registros cadastrados!
+          </div>
+          <table *ngIf="!isLoading  && formasPagamento.length > 0"
+            class="table table-sm table-striped table-borderless" #sheetTable>
+            <thead class="thead-dark">
+              <tr>
+                <th class=""></th>
+                <th *ngFor="let itemHeader of headerTable" class="text-center">
+                  <a [href]="" (click)="sortTable(itemHeader.value)">
+                    {{itemHeader.nome}}
+                    <span *ngIf="sortType == itemHeader.value && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortType == itemHeader.value && sortReverse" class="fa fa-caret-up"></span>
+                  </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of formasPagamentoPaginadas">
+                <td class="text-left">
+                  <div class="btn-group" dropdown>
+                    <button dropdownToggle type="button" class="btn">
+                      <i class="fa fa-ellipsis-v"></i>
+                    </button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><button class="dropdown-item"
+                          [routerLink]="['editar-forma-pagamento', item.id]"><i class="fa fa-pencil"></i>Editar</button>
+                      </li>
+                      <li role="menuitem"><button class="dropdown-item" (click)="inativarItem(item)"><i
+                            class="fa fa-cog"></i>{{item.status == 1 ? 'Inativar':'Ativar'}}</button></li>
+                      <li role="menuitem"><button class="dropdown-item" (click)="deleteItem(item)"><i
+                            class="fa fa-trash"></i>Excluir</button></li>
+                    </ul>
+                  </div>
+                </td>
+                <td class="text-center align-middle">{{item.descricao}}</td>
+                <td class="text-center align-middle">
+                  <span *ngIf="item.status == 1" class="badge badge-primary">Ativo</span>
+                  <span *ngIf="item.status != 1" class="badge badge-secondary">Inativo</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="row">
+            <div class="col-12 mt-3">
+              <rlar-pagination [serverSide]="false" [items]="formasPagamentoFiltradas" [pageSize]="itensPerSize"
+                [totalItens]="totalItens" (changePage)="onChangePage($event)"></rlar-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

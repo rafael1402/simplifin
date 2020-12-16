@@ -1,0 +1,64 @@
+<div class="app-body">
+  <main class="main d-flex align-items-center">
+    <div class="container">
+      <div class="row animated fadeIn">
+        <div class="col-md-6 mx-auto">
+          <div class="card-group">
+            <div class="card p-4">
+              <div class="card-body">
+                <form (submit)="login(loginForm)" #loginForm="ngForm">
+                  <div class="d-flex align-items-center">
+                    <img class="mb-3 w-100" src="assets/img/brand/logo_transparent_4.png"
+                      alt="SimpliFin - Simplificando seu controle de despesas">
+                  </div>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="icon-user"></i></span>
+                    </div>
+                    <input type="text" ngModel #email="ngModel" name="email" class="form-control" placeholder="e-mail"
+                      autocomplete="email" required [ngClass]="{'is-invalid':email.invalid && email.touched}">
+                    <div class="invalid-feedback">
+                      Favor preencher o e-mail
+                    </div>
+                  </div>
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="icon-lock"></i></span>
+                    </div>
+                    <input type="password" ngModel #senha="ngModel" name="senha" class="form-control"
+                      placeholder="Senha" autocomplete="current-password" required
+                      [ngClass]="{'is-invalid':senha.invalid && senha.touched}">
+                    <div class="invalid-feedback">
+                      Favor preencher a senha
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 col-sm-5">
+                      <button *ngIf="!isLoading" type="submit" [disabled]="loginForm.invalid"
+                        class="btn btn-block btn-dark px-4 mb-3">Acessar</button>
+                      <button *ngIf="isLoading" class="btn btn-block btn-dark px-4" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Acessando...
+                      </button>
+                    </div>
+                    <div class="col-12 col-sm-7">
+                      <button (click)="signInWithGoogle()" type="button"
+                        class="btn btn-block btn-youtube px-4 mb-3"><i class="fa fa-google mr-2"></i>Acessar usando Google</button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 text-right">
+                      <button type="button" class="btn btn-link px-0">Esqueci minha senha</button>
+                      <button type="button" class="btn btn-link px-0 ml-3" [routerLink]="['/novo-usuario']">Criar
+                        conta</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

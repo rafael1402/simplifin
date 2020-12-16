@@ -1,0 +1,81 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-6">
+      <form (submit)="manterConta(contaForm)" #contaForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Conta</strong>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="tipoConta">Tipo</label>
+                  <select class="form-control" name="tipoConta" [(ngModel)]="conta.tipo">
+                    <option *ngFor="let opcao of opcaoConta" [value]="opcao.tipo">{{opcao.descricao}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="descConta">Descrição</label>
+                  <input type="text" ngModel class="form-control"
+                    [ngClass]="{'is-invalid':descConta.invalid && descConta.touched}" name="descConta"
+                    #descConta="ngModel" [(ngModel)]="conta.descricao" maxlength="20" required>
+                  <div *ngIf="descConta.errors?.required" class="invalid-feedback">
+                    Favor preencher o campo Descrição
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="conta.status" name='status' id="ativo"
+                      [value]="1">
+                    <label class="form-check-label" for="ativo">Ativo</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="conta.status" name='status' id="inativo"
+                      [value]="0">
+                    <label class="form-check-label" for="inativo">Inativo</label>
+                  </div>
+                  <!--<select ngModel class="form-control" name="statusConta" #statusConta="ngModel"
+                    [(ngModel)]="conta.status">
+                    <option value="1">Ativo</option>
+                    <option value="0">Inativo</option>
+                  </select>-->
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button class="btn btn-primary" type="button" [routerLink]="['/cadastro/conta']"> <i class=" fa
+                fa-arrow-left mr-2"></i>Voltar</button>
+              <button *ngIf="!edit" type="reset" [disabled]="isLoading" class="mr-1 btn btn-danger"><i
+                  class="fa fa-ban mr-2"></i>Cancelar</button>
+              <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cadastrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="contaForm.invalid" class="btn btn-success">
+                <i *ngIf="edit" class="fa fa-refresh mr-2"></i>
+                <i *ngIf="!edit" class="fa fa-plus mr-2"></i>
+                <span *ngIf="edit">Atualizar</span>
+                <span *ngIf="!edit">Cadastrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

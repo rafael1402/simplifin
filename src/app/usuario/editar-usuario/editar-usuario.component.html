@@ -1,0 +1,55 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-6">
+      <form (submit)="atualizarUsuario(usuarioForm)" #usuarioForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Atualização dos seus dados</strong>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="nomeCompleto">Nome completo</label>
+                  <input type="text" ngModel class="form-control"
+                    [ngClass]="{'is-invalid':nomeCompleto.invalid && nomeCompleto.touched}" name="nomeCompleto"
+                    #nomeCompleto="ngModel" [(ngModel)]="usuario.nomeCompleto" required>
+                  <div class="invalid-feedback">
+                    Favor preencher o campo o campo Nome Completo
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="email">E-mail</label>
+                  <input type="text" ngModel class="form-control" name="email" #email="ngModel"
+                    [ngClass]="{'is-invalid':email.invalid && email.touched}" [(ngModel)]="usuario.email" disabled
+                    email>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button *ngIf="!isLoading && usuario.premium==0" type="button" class="btn btn-reddit" (click)="ativarPremium()"><i
+                  class="fa fa-star mr-2"></i> Ativar conta premium</button>
+              <button *ngIf="!isLoading && usuario.premium==1" type="button" class="btn btn-secondary" (click)="ativarPremium()"><i
+                  class="fa fa-star-o mr-2"></i> Desativar conta premium</button>
+              <button *ngIf="isLoading" class="btn btn-success" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Registrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="usuarioForm.invalid" class="btn btn-success"><i
+                  class="fa fa-refresh mr-2"></i>Atualizar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

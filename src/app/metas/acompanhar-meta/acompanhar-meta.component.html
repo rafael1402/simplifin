@@ -1,0 +1,62 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <strong>{{meta?.descricao}} período: {{meta?.dataInicio | date:"dd/MM/yyyy" }} à
+            {{meta?.dataFim | date:"dd/MM/yyyy" }}</strong>
+        </div>
+        <div class="card-body">
+
+
+          <div *ngIf="isLoading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+
+
+          <table *ngIf="!isLoading" class="table table-sm table-outline" #sheetTable>
+            <thead class="">
+              <tr>
+                <th *ngFor="let itemHeader of getHeader()" [ngClass]="{'content-desktop': !itemHeader.mobile}">
+                  <a [href]="" (click)="sortTable(itemHeader.value)">
+                    {{itemHeader.nome}}
+                    <span *ngIf="sortType == itemHeader.value && !sortReverse" class="fa fa-caret-down"></span>
+                    <span *ngIf="sortType == itemHeader.value && sortReverse" class="fa fa-caret-up"></span>
+                  </a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of metaAcompanhamento">
+                <td class="align-middle">{{item.categoria.descricao}}</td>
+                <td class="align-middle content-desktop">R${{item.valor }}</td>
+                <td class="align-middle content-desktop">R${{item.totalDespesa }}</td>
+                <td>
+                  <div class="clearfix">
+                    <div class="float-left"><strong>{{item.percentualMeta}}%</strong></div>
+                  </div>
+                  <div class="progress progress-xs">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{'width':item.percentualMeta+'%'}"
+                      [ngClass]="{'bg-success': item.percentualMeta <=50 ,'bg-warning': item.percentualMeta > 50 &&  item.percentualMeta <=75, 'bg-danger': item.percentualMeta > 75 }">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!--/.col-->
+        <div class="card-footer">
+          <div class="pull-right">
+            <button class="btn btn-primary" type="button" [routerLink]="['../../']"><i class=" fa
+              fa-arrow-left mr-2"></i>Voltar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+  <!--/.row-->
+</div>

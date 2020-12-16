@@ -1,0 +1,70 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-4">
+      <form (submit)="editarSenha(senhaForm)" #senhaForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Atualização da senha de acesso ao sistema</strong>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="senha">Senha atual</label>
+                  <input type="password" ngModel class="form-control" name="senhaAtual" #senhaAtual="ngModel"
+                    [ngClass]="{'is-invalid':senhaAtual.invalid && senhaAtual.touched}">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="senha">Nova senha</label>
+                  <input type="password" ngModel class="form-control" name="novaSenha" #novaSenha="ngModel"
+                    [ngClass]="{'is-invalid':novaSenha.invalid && novaSenha.touched}" required minlength="6">
+                  <div *ngIf="novaSenha.errors?.required" class="invalid-feedback">
+                    Favor preencher o campo o campo nova senha
+                  </div>
+                  <div *ngIf="novaSenha.errors?.minlength" class="invalid-feedback">
+                    A senha deve ter no mínimo 6 digitos
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="repetirSenha">Confirmar nova senha</label>
+                  <input type="password" ngModel class="form-control" name="confirmarSenha"
+                    confirmacaoIgualValidador="novaSenha" #confirmarSenha="ngModel"
+                    [ngClass]="{'is-invalid':confirmarSenha.invalid && confirmarSenha.touched}" required>
+                  <div *ngIf="confirmarSenha.errors?.required" class="invalid-feedback">
+                    Favor preencher o campo o campo confirmar nova senha
+                  </div>
+                  <div *ngIf="confirmarSenha.errors?.notEqual" class="invalid-feedback">
+                    As senhas devem ser iguais
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button type="reset" [disabled]="isLoading" class="mr-1 btn btn-danger"><i
+                  class="fa fa-ban mr-2"></i>Cancelar</button>
+              <button *ngIf="isLoading" class="btn btn-success" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Registrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="senhaForm.invalid" class="btn btn-success"><i
+                  class="fa fa-refresh mr-2"></i>Atualizar</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

@@ -1,0 +1,177 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12">
+      <form (submit)="manterDespesa(despesaForm)" #despesaForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Nova Despesa</strong>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+
+              <div class="form-group col-6 col-sm-4">
+                <label for="categoriaId">Categoria</label>
+                <ngx-select name="categoriaId" [items]="categorias" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="despesa.categoria" #categoria=ngModel required></ngx-select>
+                <div class="font-italic text-primary" *ngIf="categoria.errors?.required">
+                  <small>Selecione uma categoria</small>
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-4">
+                <label for="dataDespesa">Data</label>
+                <input type="text" ngxDaterangepickerMd [singleDatePicker]="true" [autoApply]="true" ngModel
+                  class="form-control" [ngClass]="{'is-invalid':dataDespesa.invalid && dataDespesa.touched}"
+                  name="dataDespesa" #dataDespesa="ngModel" [(ngModel)]="dtDespesa" required readonly
+                  [ngStyle]="{'background-color':'#fff'}">
+                <div *ngIf="dataDespesa.errors?.required" class="invalid-feedback">
+                  Favor preencher a data
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-2">
+                <label for="valorDespesa">Valor</label>
+                <input type="text" prefix="R$ " mask="0*.00" [dropSpecialCharacters]="false" ngModel
+                  class="form-control" [ngClass]="{'is-invalid':valorDespesa.invalid && valorDespesa.touched}"
+                  name="valorDespesa" #valorDespesa="ngModel" [(ngModel)]="despesa.valor" required valorValidador>
+                <div *ngIf="valorDespesa.errors?.required" class="invalid-feedback">
+                  Favor preencher o valor
+                </div>
+                <div *ngIf="valorDespesa.errors?.invalidValor" class="invalid-feedback">
+                  O valor deve ser maior que zero
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-2 align-self-center">
+                <div class="col-auto my-1">
+                  <div class="custom-control custom-checkbox">
+                    <input [(ngModel)]="despesa.baixado" type="checkbox"
+                      class="custom-control-input" name="pago" id="pago" >
+                    <label class="custom-control-label" for="pago">Pago</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-2">
+                <label for="repeticaoTipo">Repetição</label>
+                <ngx-select name="repeticaoTipo" [disabled]="edit" [items]="repeticaoTipo" optionValueField="tipo"
+                  optionTextField="descricao" [(ngModel)]="despesa.repeticaoTipo"></ngx-select>
+              </div>
+
+              <div *ngIf="despesa.repeticaoTipo !='U'" class="form-group col-6 col-sm-2">
+                <label for="repeticaoTipo"><span *ngIf="despesa.repeticaoTipo =='F'">Repetições</span>
+                  <span *ngIf="despesa.repeticaoTipo =='P'">Parcelas</span></label>
+                <input type="text" mask="00" [disabled]="edit" [validation]="false" ngModel class="form-control"
+                  name="repeticao" #repeticaoTipo="ngModel" [(ngModel)]="despesa.repeticao"
+                  [required]="despesa.repeticaoTipo !='U'">
+              </div>
+
+              <div class="form-group col-12"
+                [ngClass]="{'col-sm-4':despesa.repeticaoTipo !='U', 'col-sm-6':despesa.repeticaoTipo =='U'}">
+                <label for="contaId">Conta</label>
+                <ngx-select name="contaId" [items]="contas" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="despesa.conta" #conta=ngModel required></ngx-select>
+                <div class="font-italic text-primary" *ngIf="conta.errors?.required">
+                  <small>Selecione uma conta</small>
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-sm-4">
+                <label for="formaPagamentoId">Forma de Pagamento</label>
+                <ngx-select name="formaPagamentoId" [items]="formasPagamento" optionValueField="id"
+                  optionTextField="descricao" [(ngModel)]="despesa.formaPagamento" #formaPagamento="ngModel" required>
+                </ngx-select>
+                <div class="font-italic text-primary" *ngIf="formaPagamento.errors?.required">
+                  <small>Selecione uma forma de pagamento</small>
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-sm-6">
+                <label for="descDespesa">Descrição ({{despesa.descricao.length}}/60)</label>
+                <input type="text" ngModel class="form-control" name="descDespesa" #descDespesa="ngModel"
+                  [ngClass]="{'is-invalid':descDespesa.invalid && descDespesa.touched}" name="descDespesa"
+                  [(ngModel)]="despesa.descricao" maxlength="60">
+                <div *ngIf="descDespesa.errors?.required" class="invalid-feedback">
+                  Favor preencher a descrição
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-sm-6">
+                <label for="documento">Número de documento ({{despesa.documento.length}}/20)</label>
+                <input type="text" ngModel class="form-control" name="documento" #documento="ngModel"
+                  [(ngModel)]="despesa.documento" maxlength="20">
+              </div>
+
+              <div class="form-group col-12"
+                [ngClass]="{'col-lg-10':controleRateio == 0, 'col-lg-6':controleRateio ==1}">
+                <label for="observacao">Observações ({{despesa.observacao.length}}/250)</label>
+                <input type="text" ngModel class="form-control" name="observacao" #observacao="ngModel"
+                  [(ngModel)]="despesa.observacao" maxlength="250">
+              </div>
+
+              <div class="form-group col-4 col-lg-2">
+                <label for="rateio">Dividir Conta?</label>
+                <select class="form-control" name="rateio" [(ngModel)]="controleRateio">
+                  <option value="0">Não</option>
+                  <option value="1">Sim</option>
+                </select>
+              </div>
+
+              <div *ngIf="controleRateio == 1" class="form-group col-8 col-lg-2">
+                <label for="centro">Dividir Com</label>
+                <ngx-select name="centro" [items]="centros" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="despesa.centro" #centro="ngModel" [required]="controleRateio == 1">
+                </ngx-select>
+              </div>
+              <div *ngIf="controleRateio == 1" class="form-group col-6 col-lg-2">
+                <label for="percentual">Percentual</label>
+                <input type="text" suffix=" %" mask="0*.00" [dropSpecialCharacters]="false" ngModel class="form-control"
+                  [ngClass]="{'is-invalid':percentual.invalid && percentual.touched}" name="percentual"
+                  #percentual="ngModel" [(ngModel)]="despesa.percentualRateio" [required]="controleRateio == 1"
+                  percentualValidador>
+                <div *ngIf="percentual.errors?.required" class="invalid-feedback">
+                  Favor preencher o percentual
+                </div>
+                <div *ngIf="percentual.errors?.invalidPerc" class="invalid-feedback">
+                  O percentual deve ser menor ou igual a 100
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-lg-12">
+                <label for="despesaTags">Tags</label>
+                <ngx-select name="despesaTags" [items]="tags" noResultsFound="" [multiple]="true" optionValueField="id"
+                  optionTextField="descricao" [(ngModel)]="despesa.tag">
+                  <ng-template ngx-select-option ngx-select-option-selected let-option let-text="text">
+                    <button class="btn btn-sm"
+                      [ngStyle]="{'background-color':'#'+option.data.cor , 'color':'#'+option.data.corTexto}">{{option.data.descricao}}</button>
+                  </ng-template>
+                </ngx-select>
+              </div>
+
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button class="btn btn-primary" type="button" [routerLink]="edit ? ['../../']:['../']"> <i class=" fa
+                fa-arrow-left mr-2"></i>Voltar</button>
+              <button *ngIf="!edit" type="button" [disabled]="isLoading" class="mr-1 btn btn-danger"
+                (click)="resetForm()"><i class="fa fa-ban mr-2"></i>Cancelar</button>
+              <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cadastrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="despesaForm.invalid" class="btn btn-success">
+                <i *ngIf="edit" class="fa fa-refresh mr-2"></i>
+                <i *ngIf="!edit" class="fa fa-plus mr-2"></i>
+                <span *ngIf="edit">Atualizar</span>
+                <span *ngIf="!edit">Cadastrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

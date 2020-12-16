@@ -1,0 +1,43 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <strong>Encerramento de período</strong>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+
+            <div class="form-group col-12">
+              <label class="" for="dataTravaPeriodo"><em>Não serão permitidas lançamento de receitas, despesas ou
+                  transferências
+                  com datas iguais ou anteriores a data de encerramento de período</em></label>
+              <input type="text" ngxDaterangepickerMd [singleDatePicker]="true" [autoApply]="true" ngModel
+                class="form-control" [ngClass]="{'is-invalid':dataTravaPeriodo.invalid && dataTravaPeriodo.touched}"
+                name="dataTravaPeriodo" #dataTravaPeriodo="ngModel" [(ngModel)]="dtTravaPeriodo" required readonly
+                [ngStyle]="{'background-color':'#fff'}">
+              <div *ngIf="dataTravaPeriodo.errors?.required" class="invalid-feedback">
+                Favor preencher a data
+              </div>
+            </div>
+
+          </div>
+          <!--/.row-->
+        </div>
+        <div class="card-footer">
+          <div class="pull-right">
+            <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Atualizando...
+            </button>
+            <button *ngIf="!isLoading" type="button" (click)="manterTravaPeriodo()" class="btn btn-success">
+              <i class="fa fa-refresh mr-2"></i>
+              <span>Atualizar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

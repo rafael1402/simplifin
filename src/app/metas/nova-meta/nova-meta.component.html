@@ -1,0 +1,113 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <form (ngSubmit)="manterMeta(metaForm)" #metaForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Nova Meta</strong>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+
+              <div class="form-group col-12 col-sm-6">
+                <label for="descMeta">Descrição ({{meta.descricao.length}}/60)</label>
+                <input type="text" ngModel class="form-control" name="descMeta" #descMeta="ngModel" name="descMeta"
+                  [(ngModel)]="meta.descricao" maxlength="60" required
+                  [ngClass]="{'is-invalid':descMeta.invalid && descMeta.touched}">
+                <div *ngIf="descMeta.errors?.required" class="invalid-feedback">
+                  Favor preencher a descrição
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-sm-6">
+                <label for="dataMeta">Período</label>
+                <input type="text" ngxDaterangepickerMd [autoApply]="true" ngModel class="form-control" name="dataMeta"
+                  #dataMeta="ngModel" [(ngModel)]="dtMeta" required readonly [ngStyle]="{'background-color':'#fff'}">
+              </div>
+
+              <div class="col-12">
+                <p class="card-title"><strong>Itens</strong></p>
+              </div>
+
+              <div class="col-12 col-sm-12 list-group">
+                <div class="list-group-item list-group-item-secondary mb-2">
+
+                  <div class="row">
+                    <div class="col-sm-5">
+                      <ngx-select name="categoriaId" [placeholder]="'Categoria'" [items]="categorias"
+                        optionValueField="id" optionTextField="descricao" [(ngModel)]="metaItem.categoria">
+                      </ngx-select>
+                    </div>
+
+                    <div class="col-sm-5">
+                      <input type="text" prefix="R$ " mask="0*.00" [dropSpecialCharacters]="false" ngModel
+                        class="form-control" name="valor" #valorMeta="ngModel" [(ngModel)]="metaItem.valor"
+                        placeholder="Valor">
+                    </div>
+                    <div class="col-sm-2">
+                      <button [disabled]="metaItem.valor == null || metaItem.valor == 0 || metaItem.categoria.length == 0" (click)="adicionaItem()" type="button" class="pull-right btn btn-primary btn-block"><i
+                          class="fa fa-plus mr-2"></i>Incluir</button>
+                    </div>
+
+                  </div>
+
+                </div>
+                <div *ngFor="let item of metaItens; let i = index"
+                  class="list-group-item list-group-item-secondary mb-2">
+
+                  <div class="row">
+                    <div class="col-sm-5">
+                      <ngx-select [name]="'categoria'+i" [placeholder]="'Categoria'" [items]="categorias"
+                        optionValueField="id" optionTextField="descricao" [(ngModel)]="item.categoria">
+                      </ngx-select>
+                    </div>
+
+                    <div class="col-sm-5">
+                      <input type="text" prefix="R$ " mask="0*.00" [dropSpecialCharacters]="false" ngModel
+                        class="form-control" [ngClass]="{'is-invalid':valorMeta.invalid && valorMeta.touched}"
+                        [name]="'valor'+i" #valorMeta="ngModel" [(ngModel)]="item.valor" placeholder="Valor" required
+                        valorValidador>
+                      <div *ngIf="valorMeta.errors?.required" class="invalid-feedback">
+                        Favor preencher o valor
+                      </div>
+                      <div *ngIf="valorMeta.errors?.invalidValor" class="invalid-feedback">
+                        O valor deve ser maior que zero
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <button (click)="removerItem(item)" type="button" class="pull-right btn btn-danger btn-block"><i
+                          class="fa fa-trash mr-2" aria-hidden="true"></i>Remover</button>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
+
+
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button class="btn btn-primary" type="button" [routerLink]="edit ? ['../../']:['../']"> <i class=" fa
+                fa-arrow-left mr-2"></i>Voltar</button>
+              <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cadastrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="metaForm.invalid || metaItens.length == 0" class="btn btn-success">
+                <i *ngIf="edit" class="fa fa-refresh mr-2"></i>
+                <i *ngIf="!edit" class="fa fa-plus mr-2"></i>
+                <span *ngIf="edit">Atualizar</span>
+                <span *ngIf="!edit">Cadastrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

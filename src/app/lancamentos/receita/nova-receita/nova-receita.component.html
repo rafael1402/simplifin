@@ -1,0 +1,123 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12">
+      <form (submit)="manterReceita(receitaForm)" #receitaForm="ngForm">
+        <div class="card">
+          <div class="card-header">
+            <strong>Nova Receita</strong>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+
+              <div class="form-group col-6 col-sm-4">
+                <label for="categoriaId">Categoria</label>
+                <ngx-select name="categoriaId" [items]="categorias" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="receita.categoria" #categoria=ngModel required></ngx-select>
+                <div class="font-italic text-primary" *ngIf="categoria.errors?.required">
+                  <small>Selecione uma categoria</small>
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-4">
+                <label for="dataReceita">Data</label>
+                <input type="text" ngxDaterangepickerMd [singleDatePicker]="true" [autoApply]="true" ngModel
+                  class="form-control" [ngClass]="{'is-invalid':dataReceita.invalid && dataReceita.touched}"
+                  name="dataReceita" #dataReceita="ngModel" [(ngModel)]="dtReceita" required readonly
+                  [ngStyle]="{'background-color':'#fff'}">
+                <div *ngIf="dataReceita.errors?.required" class="invalid-feedback">
+                  Favor preencher a data
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-2">
+                <label for="valorReceita">Valor</label>
+                <input type="text" prefix="R$ " mask="0*.00" [dropSpecialCharacters]="false" ngModel
+                  class="form-control" [ngClass]="{'is-invalid':valorReceita.invalid && valorReceita.touched}"
+                  name="valorReceita" #valorReceita="ngModel" [(ngModel)]="receita.valor" required valorValidador>
+                <div *ngIf="valorReceita.errors?.required" class="invalid-feedback">
+                  Favor preencher o valor
+                </div>
+                <div *ngIf="valorReceita.errors?.invalidValor" class="invalid-feedback">
+                  O valor deve ser maior que zero
+                </div>
+              </div>
+
+              <div class="form-group col-6 col-sm-2">
+                <label for="repeticaoTipo">Repetição</label>
+                <ngx-select name="repeticaoTipo" [disabled]="edit" [items]="repeticaoTipo" optionValueField="tipo"
+                  optionTextField="descricao" [(ngModel)]="receita.repeticaoTipo"></ngx-select>
+              </div>
+
+              <div *ngIf="receita.repeticaoTipo !='U'" class="form-group col-6 col-sm-2">
+                <label for="repeticaoTipo"><span *ngIf="receita.repeticaoTipo =='F'">Repetições</span>
+                  <span *ngIf="receita.repeticaoTipo =='P'">Parcelas</span></label>
+                <input type="text" mask="00" [disabled]="edit" [validation]="false" ngModel class="form-control"
+                  name="repeticao" #repeticaoTipo="ngModel" [(ngModel)]="receita.repeticao"
+                  [required]="receita.repeticaoTipo !='U'">
+              </div>
+
+              <div class="form-group col-12"
+                [ngClass]="{'col-sm-2':receita.repeticaoTipo !='U', 'col-sm-4':receita.repeticaoTipo =='U'}">
+                <label for="contaId">Conta</label>
+                <ngx-select name="contaId" [items]="contas" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="receita.conta" #conta=ngModel required></ngx-select>
+                <div class="font-italic text-primary" *ngIf="conta.errors?.required">
+                  <small>Selecione uma conta</small>
+                </div>
+              </div>
+
+
+              <div class="form-group col-12 col-sm-4">
+                <label for="descReceita">Descrição ({{receita.descricao.length}}/60)</label>
+                <input type="text" ngModel class="form-control" name="descReceita" #descReceita="ngModel"
+                  [ngClass]="{'is-invalid':descReceita.invalid && descReceita.touched}" name="descReceita"
+                  [(ngModel)]="receita.descricao" maxlength="60">
+                <div *ngIf="descReceita.errors?.required" class="invalid-feedback">
+                  Favor preencher a descrição
+                </div>
+              </div>
+
+              <div class="form-group col-12 col-sm-4">
+                <label for="documento">Número de documento ({{receita.documento.length}}/20)</label>
+                <input type="text" ngModel class="form-control" name="documento" #documento="ngModel"
+                  [(ngModel)]="receita.documento" maxlength="20">
+              </div>
+
+              <div class="form-group col-12 col-lg-12">
+                <label for="receitaTags">Tags</label>
+                <ngx-select name="receitaTags" [items]="tags" noResultsFound="" [multiple]="true" optionValueField="id"
+                  optionTextField="descricao" [(ngModel)]="receita.tag">
+                  <ng-template ngx-select-option ngx-select-option-selected let-option let-text="text">
+                    <button class="btn btn-sm"
+                      [ngStyle]="{'background-color':'#'+option.data.cor , 'color':'#'+option.data.corTexto}">{{option.data.descricao}}</button>
+                  </ng-template>
+                </ngx-select>
+              </div>
+
+            </div>
+            <!--/.row-->
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <button class="btn btn-primary" type="button" [routerLink]="edit ? ['../../']:['../']"> <i class=" fa
+                fa-arrow-left mr-2"></i>Voltar</button>
+              <button *ngIf="!edit"type="button" [disabled]="isLoading" class="mr-1 btn btn-danger" (click)="resetForm()"><i
+                  class="fa fa-ban mr-2"></i>Cancelar</button>
+              <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cadastrando...
+              </button>
+              <button *ngIf="!isLoading" type="submit" [disabled]="receitaForm.invalid" class="btn btn-success">
+                <i *ngIf="edit" class="fa fa-refresh mr-2"></i>
+                <i *ngIf="!edit" class="fa fa-plus mr-2"></i>
+                <span *ngIf="edit">Atualizar</span>
+                <span *ngIf="!edit">Cadastrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--/.col-->
+  </div>
+</div>

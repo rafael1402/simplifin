@@ -1,0 +1,278 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-sm-12">
+              <h2 class="mb-3 text-center">Resumo dos lançamentos do período</h2>
+            </div>
+            <div class="col-12 col-sm-10">
+              <input type="text" ngxDaterangepickerMd [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]=true
+                [linkedCalendars]="true" class="form-control" name="dataFiltro" [(ngModel)]="dtFiltro" readonly
+                [ngStyle]="{'background-color':'#fff'}" (datesUpdated)="carregarRelatorios()">
+            </div>
+            <div class="col-12 col-sm-2 col-md-2 col-lg-2">
+              <div class="btn-block" dropdown>
+                <button dropdownToggle type="button" class="btn btn-primary btn-block">
+                  <strong>Novo lançamento</strong>
+                </button>
+                <ul *dropdownMenu class="dropdown-menu" role="menu">
+                  <li role="menuitem"><button class="dropdown-item"
+                      [routerLink]="['/lancamentos/despesas/nova-despesa']"><i
+                        class="fa fa-minus-square"></i>Despesa</button>
+                  </li>
+                  <li role="menuitem"><button class="dropdown-item"
+                      [routerLink]="['/lancamentos/receitas/nova-receita']"><i
+                        class="fa fa-plus-square"></i>Receita</button>
+                  </li>
+                  <li role="menuitem"><button class="dropdown-item"
+                      [routerLink]="['/lancamentos/transferencias/nova-transferencia']"><i
+                        class="fa fa fa-exchange"></i>Transferência</button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Balanço mensal</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingBalancoMensal" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingBalancoMensal && balancoMensalData.length == 0" class="alert alert-info" role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="balancoMensalData.length > 0" class="chart-wrapper">
+              <div>
+                <canvas baseChart [datasets]="balancoMensalData" [options]="chartOptions" [labels]="balancoMensalLabel"
+                  [plugins]="barChartPlugins" [legend]="true" [chartType]="'bar'">
+                </canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Resumo de Contas</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div *ngIf="isLoadingResumoConta" class="mt-3 text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div *ngIf="!isLoadingResumoConta && resumoConta.length == 0" class="alert alert-info" role="alert">
+            {{vazioMsg}}
+          </div>
+          <div *ngIf="!isLoadingResumoConta && resumoConta.length > 0">
+            <table class="table table-sm table-outline" #sheetTable>
+              <thead class="table-info">
+                <tr class="">
+                  <th>Conta</th>
+                  <th class="content-desktop">Receitas</th>
+                  <th class="content-desktop">Trasnf. Entrada</th>
+                  <th class="content-desktop">Despesas</th>
+                  <th class="content-desktop">Trasnf. Saída</th>
+                  <th>Saldo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of resumoConta">
+                  <td class="align-middle"><strong>{{item.conta}}</strong></td>
+                  <td class="align-middle content-desktop">R${{item.totalReceitas }}</td>
+                  <td class="align-middle content-desktop">R${{item.totalTransferenciasEntradas }}</td>
+                  <td class="align-middle content-desktop">R${{item.totalDespesas }}</td>
+                  <td class="align-middle content-desktop">R${{item.totalTransferenciasSaidas }}</td>
+                  <td class="align-middle" [ngClass]="{'text-success': item.saldo > 0 ,'text-danger': item.saldo <= 0}">
+                    <strong>R${{item.saldo }}</strong></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="table-info">
+                  <td><strong>Total</strong></td>
+                  <td class="align-middle content-desktop"><strong>R${{somaTotalReceitas }}</strong></td>
+                  <td class="align-middle content-desktop"><strong>R${{somaTotalTransferenciasEntradas }}</strong></td>
+                  <td class="align-middle content-desktop"><strong>R${{somaTotalDespesas }}</strong></td>
+                  <td class="align-middle content-desktop"><strong>R${{somaTotalRransferenciasSaidas }}</strong></td>
+                  <td class="align-middle" [ngClass]="{'text-success': somaSaldo > 0 ,'text-danger': somaSaldo <= 0}">
+                    <strong>R${{somaSaldo }}</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Total despesas por Categoria</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingDespesasPorCategoria" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingDespesasPorCategoria && despesasPorCategoriaData.length == 0" class="alert alert-info"
+              role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="despesasPorCategoriaData.length > 0">
+              <canvas baseChart class="chart" [data]="despesasPorCategoriaData" [legend]="true"
+                [labels]="despesasPorCategoriaLabel" [chartType]="'doughnut'" [colors]="despesasPorCategoriaColors"
+                [options]="chartOptions"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Total receitas por Categoria</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingReceitasPorCategoria" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingReceitasPorCategoria && receitasPorCategoriaData.length == 0" class="alert alert-info"
+              role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="receitasPorCategoriaData.length > 0">
+              <canvas baseChart class="chart" [data]="receitasPorCategoriaData" [legend]="true"
+                [labels]="receitasPorCategoriaLabel" [chartType]="'doughnut'" [colors]="receitasPorCategoriaColors"
+                [options]="chartOptions"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Total despesas por forma de pagamento</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingDespesasPorFormaPagamento" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingDespesasPorFormaPagamento && despesasPorFormaPagamentoData.length == 0"
+              class="alert alert-info" role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="despesasPorFormaPagamentoData.length > 0">
+              <canvas baseChart class="chart" [data]="despesasPorFormaPagamentoData" [legend]="true"
+                [labels]="despesasPorFormaPagamentoLabel" [chartType]="'pie'" [colors]="despesasPorFormaPagamentoColors"
+                [options]="chartOptions"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Top 5 despesas mais altas</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingTopDespesas" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingTopDespesas && topDespesasData.length == 0" class="alert alert-info" role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="topDespesasData.length > 0">
+              <canvas baseChart class="chart" [data]="topDespesasData" [legend]="true" [labels]="topDespesasLabel"
+                [chartType]="'pie'" [colors]="topDespesasColors" [options]="chartOptions"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+    <div class="col-12 col-md-12 col-sm-12 col-xs-12 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h4 class="card-title text-center">Top 5 receitas mais altas</h4>
+            </div>
+            <!--/.col-->
+          </div>
+          <!--/.row-->
+          <div>
+            <div *ngIf="isLoadingTopReceitas" class="mt-3 text-center">
+              <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoadingTopReceitas && topReceitasData.length == 0" class="alert alert-info" role="alert">
+              {{vazioMsg}}
+            </div>
+            <div *ngIf="topDespesasData.length > 0">
+              <canvas baseChart class="chart" [data]="topReceitasData" [legend]="true" [labels]="topReceitasLabel"
+                [chartType]="'pie'" [colors]="topReceitasColors" [options]="chartOptions"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+  <!--/.row-->
+</div>
