@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { AutenticacaoGuard } from "../autenticacao/autenticacao.guard";
+import { AutPremiumGuard } from "../autenticacao/premium.guard";
 import { AcompanharMetaComponent } from './acompanhar-meta/acompanhar-meta.component';
 import { ListarMetaComponent } from "./listar-meta/listar-meta.component";
 import { NovaMetaComponent } from "./nova-meta/nova-meta.component";
@@ -19,7 +20,7 @@ const routes: Routes = [
         data: {
           title: "Meta",
         },
-        canActivate: [AutenticacaoGuard],
+        canActivate: [AutPremiumGuard,AutenticacaoGuard],
       },
       {
         path: "metas/nova-meta",
@@ -52,6 +53,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [AutenticacaoGuard],
+  providers: [AutPremiumGuard, AutenticacaoGuard],
 })
 export class MetaRoutingModule {}

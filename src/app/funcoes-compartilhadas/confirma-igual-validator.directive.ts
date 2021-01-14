@@ -23,6 +23,7 @@ export class ConfirmaIgualValidadorDirective implements Validator {
     if (controlToCompare && controlToCompare.value !== control.value) {
       return {'notEqual':true}
     }
+    else
     return null;
   }
 }

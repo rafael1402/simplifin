@@ -31,10 +31,13 @@
 
               <div class="form-group col-12 col-sm-4">
                 <label for="contaIdDestino">Conta Destino</label>
-                <ngx-select name="contaIdDestino" [items]="contas" optionValueField="id" optionTextField="descricao"
-                  [(ngModel)]="transferencia.contaDestino" #contaDestino=ngModel required></ngx-select>
+                <ngx-select name="contaIdDestino" validaIgualValidador="contaIdOrigem" [items]="contas" optionValueField="id" optionTextField="descricao"
+                  [(ngModel)]="transferencia.contaDestino" #contaDestino=ngModel  required></ngx-select>
                 <div class="font-italic text-primary" *ngIf="contaDestino.errors?.required">
                   <small>Selecione uma conta</small>
+                </div>
+                <div class="font-italic text-danger"  *ngIf="contaDestino.touched && contaDestino.errors?.equal" >
+                  As contas de origem e destino não podem ser iguais
                 </div>
               </div>
 
@@ -100,7 +103,7 @@
             <div class="pull-right">
               <button class="btn btn-primary" type="button" [routerLink]="edit ? ['../../']:['../']"> <i class=" fa
                 fa-arrow-left mr-2"></i>Voltar</button>
-              <button *ngIf="!edit" type="button" [disabled]="isLoading" class="mr-1 btn btn-danger"
+              <button *ngIf="!edit" type="button" [disabled]="isLoading" class="mr-2 btn btn-danger"
                 (click)="resetForm()"><i class="fa fa-ban mr-2"></i>Cancelar</button>
               <button *ngIf="isLoading" type="button" class="btn btn-success" disabled>
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
